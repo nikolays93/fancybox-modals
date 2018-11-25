@@ -1,0 +1,210 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: plugin\n"
+"POT-Creation-Date: 2018-11-25 21:24+0400\n"
+"PO-Revision-Date: 2018-11-25 21:24+0400\n"
+"Last-Translator: \n"
+"Language-Team: NikolayS93 <NikolayS93@yandex.ru>\n"
+"Language: ru_RU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.7\n"
+"X-Poedit-Basepath: ../.\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Poedit-KeywordsList: __;__e;_n:1,2;_x:1,2c\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: includes/classes\n"
+"X-Poedit-SearchPathExcluded-1: languages\n"
+"X-Poedit-SearchPathExcluded-2: .git\n"
+
+#: admin/template/menu-page.php:13
+msgid "Shortcode"
+msgstr "Короткий код"
+
+#: admin/template/menu-page.php:14
+msgid "Show Count"
+msgstr "Кол-во показов"
+
+#: admin/template/menu-page.php:15
+msgid "Author"
+msgstr "Автор"
+
+#: admin/template/menu-page.php:16
+msgid "Date"
+msgstr "Дата"
+
+#: admin/template/menu-page.php:34 admin/template/post-metabox.php:12
+msgid "Open"
+msgstr "Открыть"
+
+#: admin/template/menu-page.php:49
+msgid "Create"
+msgstr "Создать"
+
+#: admin/template/metabox1.php:12
+msgid "jQuery Selector"
+msgstr "jQuery селектор"
+
+#: admin/template/metabox1.php:22
+msgid "Show effect"
+msgstr "Эффект открытия"
+
+#: admin/template/metabox1.php:24 admin/template/metabox1.php:36
+msgid "Without effect"
+msgstr "Без эффекта"
+
+#: admin/template/metabox1.php:25
+msgid "Zoom"
+msgstr "Увеличение от объекта"
+
+#: admin/template/metabox1.php:26 admin/template/metabox1.php:37
+msgid "Fade"
+msgstr "Угасание"
+
+#: admin/template/metabox1.php:27 admin/template/metabox1.php:41
+msgid "Zoom in out"
+msgstr "Увеличение из вне"
+
+#: admin/template/metabox1.php:34
+msgid "Prev/Next effect"
+msgstr "Эффект перелистывания"
+
+#: admin/template/metabox1.php:38
+msgid "Slide"
+msgstr "Скольжение"
+
+#: admin/template/metabox1.php:39
+msgid "Circular"
+msgstr "Циркуляция"
+
+#: admin/template/metabox1.php:40
+msgid "Tube"
+msgstr "Труба"
+
+#: admin/template/metabox1.php:42
+msgid "Rotate"
+msgstr "Переворот"
+
+#: admin/template/metabox1.php:49
+msgid "To group objects, use the same <em>rel</em>"
+msgstr "Для группировки объектов используйте одинаковый аттрибут <em>rel</em>"
+
+#: admin/template/post-metabox.php:16
+msgid ""
+"Copy the code above to the desired page, or paste the following code into "
+"the template"
+msgstr ""
+"Скопируйте код выше на нужную страницу или вставьте следующий код в шаблон"
+
+#: admin/template/post-metabox.php:26
+msgid "On click on [shortcode]'s content"
+msgstr "При нажатии на контент [кода]'а"
+
+#: admin/template/post-metabox.php:27
+msgid "On click on selector"
+msgstr "При нажатии по селектору"
+
+#: admin/template/post-metabox.php:28
+msgid "Page on load, after (sec)"
+msgstr "После загрузки страницы (сек.)"
+
+#: admin/template/post-metabox.php:29
+msgid "When user try to close tab"
+msgstr "При попытке закрыть вкладку"
+
+#: admin/template/post-metabox.php:45
+msgid "Insert CSS/jQuery selector for \"Click\" event"
+msgstr "Введите CSS/jQuery селектор для \"Click\" события"
+
+#: admin/template/post-metabox.php:55
+msgid "Insert time (seconds count), open window after page on load"
+msgstr ""
+"Введите время (колличество секунд), через которое открыть окно после "
+"загрузки страницы"
+
+#: admin/template/post-metabox.php:66
+msgid "Disallow show window"
+msgstr "После, запретить показ на"
+
+#: admin/template/post-metabox.php:69
+msgid "Insert the number of hours the window will be disabled"
+msgstr ""
+"Введите количество часов, открытие окна на протяжении которых будет отключено"
+
+#: admin/template/post-metabox.php:70
+msgid "Need the cookies"
+msgstr "Использует печеньки :)"
+
+#: fancybox-modals.php:109 fancybox-modals.php:113
+msgid "Modals"
+msgstr "Всплывающие окна"
+
+#: fancybox-modals.php:127
+msgid "Lib settings"
+msgstr "Настройки библиотеки"
+
+#: include/ajax.php:12
+msgid "Error! Failed security policy"
+msgstr "Ошибка! нарушены правила безопасности"
+
+#: include/ajax.php:17
+msgid "Not given the ID of a modal window"
+msgstr "Не передан ID всплывающего окна"
+
+#: include/register.php:66
+msgid "Event"
+msgstr "Событие"
+
+#: include/shortcode.php:160
+msgid "Loading.."
+msgstr "Загрузка.."
+
+#: vendor/NikolayS93/wp-admin-form/src/templates/select.php:8
+msgid "Choose an option"
+msgstr "Выберите вариант"
+
+#: vendor/NikolayS93/wp-admin-table/WPListTable.php:37
+msgid "Title"
+msgstr "Заголовок"
+
+#: vendor/NikolayS93/wp-admin-table/WPListTable.php:104
+msgid "Edit"
+msgstr "Изменить"
+
+#: vendor/NikolayS93/wp-admin-table/WPListTable.php:115
+#: vendor/NikolayS93/wp-admin-table/WPListTable.php:145
+msgid "Delete"
+msgstr "Удалить"
+
+#~ msgid "Fancybox 3"
+#~ msgstr "Fancybox 3"
+
+#~ msgid "Magnific Popup"
+#~ msgstr "Magnific Popup"
+
+#~ msgid "PhotoSwipe"
+#~ msgstr "PhotoSwipe"
+
+#~ msgid "LightGallery"
+#~ msgstr "LightGallery"
+
+#~ msgid "Libary"
+#~ msgstr "Библиотека"
+
+#~ msgid "Do not use"
+#~ msgstr "Не использовать"
+
+#~ msgid "Save"
+#~ msgstr "Сохранить"
+
+#~ msgid "Type:"
+#~ msgstr "Тип:"
+
+#~ msgid "Hide on footer"
+#~ msgstr "Скрыть в подвале"
+
+#~ msgid "The file %s can not be included"
+#~ msgstr "Файл %s не может быть загружен"
