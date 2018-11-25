@@ -75,7 +75,7 @@ class Plugin
     public static function hooks()
     {
         $class = __NAMESPACE__ . '\Shortcode';
-        add_action( 'FBModal_body', array($class, 'modal_window_head'), 10, 2 );
+        add_action( 'FBModal_head', array($class, 'modal_window_head'), 10, 2 );
         add_action( 'FBModal_body', array($class, 'modal_window_body'), 10, 2 );
 
         add_action('wp_footer', array($class, 'setup_footer'));

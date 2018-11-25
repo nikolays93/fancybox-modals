@@ -1,6 +1,8 @@
 jQuery(document).ready(function($) {
     var triggerTypeID = '_trigger_type',
         $triggerTypeElem = $('#' + triggerTypeID),
+        $typeDescElem = $('#_modal_type'),
+        $typeDescriptions = $('.modal_type-desc'),
 
         scTxtID = 'shortcode_tpl',
         $scTxtElem = $('#'+scTxtID),
@@ -34,6 +36,11 @@ jQuery(document).ready(function($) {
                 .show()
                 .removeAttr('disable');
         }
+    }).trigger('change');
+
+    $typeDescElem.on('change', function (event) {
+        $('div', $typeDescriptions).hide();
+        $('.tip-' + $(this).val(), $typeDescriptions).show();
     }).trigger('change');
 
     // Select the shortcode on click

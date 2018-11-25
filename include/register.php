@@ -67,11 +67,42 @@ $mb->add_box( __( 'Event', DOMAIN ), function() {
     include PLUGIN_DIR . '/admin/template/post-metabox.php';
 }, $side = true );
 
-// $mb = new WP_Post_Boxes( array( Utils::get_post_type_name() ) );
-// $mb->add_fields( array('_modal_type') );
-// $mb->add_box( __( 'Type', DOMAIN ), function() {
-//     include PLUGIN_DIR . '/admin/template/post-metabox-type.php';
-// }, $side = true );
+$mb = new WP_Post_Boxes( array( Utils::get_post_type_name() ) );
+$mb->add_fields( array('_modal_type') );
+$mb->add_box( __( 'Type', DOMAIN ), function() {
+    include PLUGIN_DIR . '/admin/template/post-metabox-type.php';
+}, $side = true );
+
+add_action('edit_form_after_title', __NAMESPACE__ . '\render_second_title');
+function render_second_title() {
+    global $post;
+
+    $hide = get_post_meta($post->ID, '_hide_title', true);
+    ?>
+    <style>
+        #hide-title__wrap {
+            position: absolute;
+            right: 8px;
+            top: 10px;
+        }
+        #hide-title input {
+            margin-left: 5px;
+        }
+    </style>
+
+    <div id="hide-title__wrap">
+        <label id="hide-title">
+            <?php echo __('Do not show title', DOMAIN); ?>
+            <input
+                type="checkbox"
+                name="hide_title"
+                value="1"
+                class="align-right"
+                <?php checked($hide, '1');?> />
+        </label>
+    </div>
+    <?php
+}
 
 /**
  * Save metabox fields
@@ -92,5 +123,12 @@ function save_trigger_field( $post_id ) {
     }
     else {
         delete_post_meta( $post_id, '_trigger' );
+    }
+
+    if( !empty( $_POST['hide_title'] ) ) {
+        update_post_meta( $post_id, '_hide_title', 1 );
+    }
+    else {
+        delete_post_meta( $post_id, '_hide_title' );
     }
 }

@@ -70,6 +70,7 @@ class Shortcode
             if( empty($modal->ID) ) continue;
 
             $type = get_post_meta( $modal->ID, '_modal_type', true );
+            if( 'inline' != $type ) continue;
 
             echo "<div id='modal_{$modal->ID}' style='display: none;'>";
 
@@ -85,6 +86,8 @@ class Shortcode
 
     private static function enqueue_modal_scripts()
     {
+        if( !is_array(self::$bootstraps) || !sizeof(self::$bootstraps) ) return false;
+
         $assets = Utils::get_plugin_url('/assets');
         $affix = ( defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ) ? '.min' : '';
 
@@ -95,6 +98,19 @@ class Shortcode
             'nonce'    => wp_create_nonce( 'Secret' ),
             'cookie'   => 'fb3m_disabled',
             'expires'  => apply_filters( 'disable_coockie_expires', 24 * 7 ), // one week
+            'lang'     => array(
+                'CLOSE'       => "Закрыть",
+                'NEXT'        => "Следующий",
+                'PREV'        => "Предыдущий",
+                'ERROR'       => "Запрошенный контент не может быть загружен. <br/> Пожалуйста, попробуйте позже.",
+                'PLAY_START'  => "Запустить слайдшоу",
+                'PLAY_STOP'   => "Остановить слайдшоу",
+                'FULL_SCREEN' => "На весь экран",
+                'THUMBS'      => "Превью",
+                'DOWNLOAD'    => "Скачать",
+                'SHARE'       => "Поделиться",
+                'ZOOM'        => "Приблизить"
+            ),
         ));
 
         $script = $assets . "/fancybox3/jquery.fancybox{$affix}.js";
@@ -126,12 +142,22 @@ class Shortcode
 
         $modals = array();
         foreach (self::$bootstraps as $modal) {
+            $type = get_post_meta( $modal->ID, '_modal_type', true );
+
             $modals[ $modal->ID ] = array(
                 'trigger_type'   => get_post_meta( $modal->ID, '_trigger_type', true ),
                 'trigger'        => get_post_meta( $modal->ID, '_trigger', true ),
                 'disable_ontime' => get_post_meta( $modal->ID, '_disable_ontime', true ),
-                'modal_type'     => get_post_meta( $modal->ID, '_modal_type', true ),
+                'modal_type'     => $type,
             );
+
+            if( 'script' == $type ) {
+                ob_start();
+                do_action( 'FBModal_head', $modal, $type );
+                do_action( 'FBModal_body', $modal, $type );
+                do_action( 'FBModal_foot', $modal, $type );
+                $modals[ $modal->ID ]['src'] = ob_get_clean();
+            }
         }
 
         wp_enqueue_script( 'FB3Modals_public', $assets . '/public.js', array('jquery'), Plugin::$data['Version'], true );
@@ -169,7 +195,8 @@ class Shortcode
 
     static function modal_window_head( $modal, $type )
     {
-        if( $modal )
+        if( $modal && !$hide_title = get_post_meta( $modal->ID, '_hide_title', true ) ) {
             echo "<h2>{$modal->post_title}</h2>";
+        }
     }
 }

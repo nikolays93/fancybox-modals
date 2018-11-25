@@ -28,7 +28,7 @@ jQuery(document).ready(function($) {
         /**
          * Get cookie
          */
-        var o=document.cookie.match(new RegExp("(?:^|; )"+e.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g,"\\$1")+"=([^;]*)"));
+        var o=document.cookie.match(new RegExp("(?:^|; )"+FBM_Settings.cookie.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g,"\\$1")+"=([^;]*)"));
         var cookie = o?decodeURIComponent(o[1]):void 0;
 
         if( cookie ) {
@@ -41,18 +41,29 @@ jQuery(document).ready(function($) {
 
         if( args.disable_ontime <= 0 || !(modal_id in disabled) || new Date().getTime() > disabled[ modal_id ] ) {
             try {
-                $.fancybox.open({
+                var fancy = {
                     src  : '#modal_' + modal_id,
                     type : 'inline',
                     opts : {
                         afterShow : function( instance, current ) {
                             writeCookieTime( modal_id, args.disable_ontime );
                             increaseClickCount( modal_id );
+                        },
+                        lang: "ru",
+                        i18n: {
+                            ru: FBM_Settings.lang
                         }
                     }
-                });
+                };
+
+                if( 'script' == args.modal_type ) {
+                    fancy.src = args.src;
+                    fancy.type = 'html';
+                } 
+
+                $.fancybox.open( fancy );
             } catch(e) {
-                console.error('Библиотека не установленна');
+                console.error('Fancybox libarary is not installed');
                 console.log(e);
             }
         }
