@@ -75,9 +75,9 @@ $mb->add_box( __( 'Type', DOMAIN ), function() {
 
 add_action('edit_form_after_title', __NAMESPACE__ . '\render_second_title');
 function render_second_title() {
-    if( Utils::get_post_type_name() != get_post_type( $post ) ) return;
-
     global $post;
+
+    if( Utils::get_post_type_name() != get_post_type( $post ) ) return;
 
     $hide = get_post_meta($post->ID, '_hide_title', true);
     ?>
