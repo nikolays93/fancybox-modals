@@ -89,7 +89,7 @@ class Shortcode
         if( !is_array(self::$bootstraps) || !sizeof(self::$bootstraps) ) return false;
 
         $assets = Utils::get_plugin_url('/assets');
-        $affix = ( defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ) ? '.min' : '';
+        $affix = ( defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ) ? '' : '.min';
 
         $gSettings = wp_parse_args(Utils::get(), array(
             'selector' => '',
