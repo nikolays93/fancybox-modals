@@ -98,15 +98,25 @@ class Shortcode
             'nonce'    => wp_create_nonce( 'Secret' ),
             'cookie'   => 'fb3m_disabled',
             'expires'  => apply_filters( 'disable_coockie_expires', 24 * 7 ), // one week
-            'lang'     => array(
+            'buttons'  => array(
+                "zoom",
+                //"share",
+                "slideShow",
+                "fullScreen",
+                //"download",
+                // "thumbs",
+                "close"
+            ),
+            'lang'     => 'ru',
+            'i18n'     => array(
                 'CLOSE'       => "Закрыть",
                 'NEXT'        => "Следующий",
                 'PREV'        => "Предыдущий",
-                'ERROR'       => "Запрошенный контент не может быть загружен. <br/> Пожалуйста, попробуйте позже.",
+                'ERROR'       => "Контент по запросу не найден. <br/> Пожалуйста, попробуйте позже.",
                 'PLAY_START'  => "Запустить слайдшоу",
                 'PLAY_STOP'   => "Остановить слайдшоу",
                 'FULL_SCREEN' => "На весь экран",
-                'THUMBS'      => "Превью",
+                'THUMBS'      => "Эскизы",
                 'DOWNLOAD'    => "Скачать",
                 'SHARE'       => "Поделиться",
                 'ZOOM'        => "Приблизить"

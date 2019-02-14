@@ -1,116 +1,180 @@
-/**
- * global FBModals, FBM_Settings
- */
 jQuery(document).ready(function($) {
-    // const
-    var hour = 60 * 60 * 1000;
-    var cookieLive = hour * FBM_Settings.expires;
-    // let
-    var disabled = {};
+    var oneHour   = 60 * 60 * 1000;
 
-    function increaseClickCount( modal_id ) {
-        $.post( FBM_Settings.ajax_url, {
-            action: 'increase_click_count',
-            nonce: FBM_Settings.nonce,
-            modal_id: modal_id
-        });
-    }
+    /** global FBModals list of modal posts */
+    var modals = FBModals;
 
-    function writeCookieTime( modal_id, time ) {
-        if( 0 >= time ) return;
-        var now = new Date().getTime();
+    /** global FBM_Settings general plugin settings */
+    var args   = FBM_Settings;
 
-        disabled[ modal_id ] = now + (hour * time);
-        document.cookie = FBM_Settings.cookie +"="+ JSON.stringify(disabled) +"; path=/; expires=" + new Date(now + cookieLive).toUTCString();
-    }
+    args.disabled = getDisabledList();
 
-    function openLWModal(modal_id, args) {
-        /**
-         * Get cookie
-         */
-        var o=document.cookie.match(new RegExp("(?:^|; )"+FBM_Settings.cookie.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g,"\\$1")+"=([^;]*)"));
+    $.fancybox.defaults.buttons = args.buttons;
+    $.fancybox.defaults.lang = args.lang;
+    $.fancybox.defaults.i18n[ args.lang ] = args.i18n;
+
+    /**
+     * Get list of disabled modals from cookie
+     * @return Object from json
+     */
+    function getDisabledList() {
+        var disabled = {};
+
+        var o=document.cookie.match(new RegExp("(?:^|; )"+args.cookie.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g,"\\$1")+"=([^;]*)"));
         var cookie = o?decodeURIComponent(o[1]):void 0;
 
         if( cookie ) {
             try {
                 disabled = JSON.parse( cookie );
             } catch(e) {
+                console.log('Can\'t get disabled modal\'s cookie data');
                 console.log(e);
             }
         }
 
-        if( args.disable_ontime <= 0 || !(modal_id in disabled) || new Date().getTime() > disabled[ modal_id ] ) {
-            try {
-                var fancy = {
-                    src  : '#modal_' + modal_id,
-                    type : 'inline',
-                    opts : {
-                        afterShow : function( instance, current ) {
-                            writeCookieTime( modal_id, args.disable_ontime );
-                            increaseClickCount( modal_id );
-                        },
-                        lang: "ru",
-                        i18n: {
-                            ru: FBM_Settings.lang
+        return disabled;
+    };
+
+    var preloaderClass = 'fb-loading';
+    window.showPreloader = function( message ) {
+        if(!message) message = 'Загрузка..';
+        $preload = $('<p>'+ message +'</p>').css({
+            'margin-top': '50px',
+            'margin-bottom': '-40px',
+            'padding-bottom': '',
+            'color': '#ddd'
+        });;
+
+        var $body = $('body');
+
+        $.fancybox.open({
+            content  : $preload,
+            type     : 'html',
+            smallBtn : false,
+            afterLoad: function(instance, current) {
+                $('.fancybox-content', instance.$refs['fancybox-stage']).css('background', 'none');
+            },
+            afterShow: function(instance, current) {
+                $body.addClass(preloaderClass);
+                instance.showLoading( current );
+            },
+            afterClose: function(instance, current) {
+                $body.removeClass(preloaderClass);
+                instance.hideLoading( current );
+            }
+        });
+    };
+
+    window.hidePreloader = function() {
+        var $body = $('body');
+
+        if( $body.hasClass(preloaderClass) ) {
+            $.fancybox.getInstance().close();
+        }
+    };
+
+    var fancyboxModal = function(modalID, modalArgs) {
+        this.modal_id = modalID;
+        this.modal_args = modalArgs ? modalArgs : {};
+
+        // @todo
+        // this.defaults = {};
+    }
+
+    fancyboxModal.prototype = {
+        increaseClickCount: function() {
+            $.post( args.ajax_url, {
+                action: 'increase_click_count',
+                nonce: args.nonce,
+                modal_id: this.modal_id
+            });
+        },
+        writeCookieTime: function() {
+            var now = new Date().getTime();
+            var time = parseFloat(this.modal_args.disable_ontime);
+            if( 0 >= time ) return;
+
+            args.disabled[ this.modal_id ] = now + (oneHour * time);
+            document.cookie = args.cookie +"="+ JSON.stringify(args.disabled) +"; path=/; expires=" + new Date(now + (oneHour * args.expires)).toUTCString();
+        },
+        open: function() {
+            var self = this;
+
+            if( self.modal_args.disable_ontime <= 0 || !(modal_id in args.disabled) || new Date().getTime() > args.disabled[ modal_id ] ) {
+                try {
+                    var fancy = {
+                        src  : '#modal_' + modal_id,
+                        type : 'inline',
+                        opts : {
+                            afterShow : function( instance, current ) {
+                                self.writeCookieTime();
+                                self.increaseClickCount();
+                            },
                         }
+                    };
+
+                    if( 'script' == self.modal_args.modal_type ) {
+                        fancy.src = self.modal_args.src;
+                        fancy.type = 'html';
                     }
-                };
 
-                if( 'script' == args.modal_type ) {
-                    fancy.src = args.src;
-                    fancy.type = 'html';
-                } 
-
-                $.fancybox.open( fancy );
-            } catch(e) {
-                console.error('Fancybox libarary is not installed');
-                console.log(e);
+                    $.fancybox.open( fancy );
+                } catch(e) {
+                    console.error('Do you hooked up the Fancybox library?');
+                    console.log(e);
+                }
             }
         }
     }
 
-    if( FBM_Settings.selector ) {
+    /**
+     * Set events by selector for gallery images
+     */
+    if( args.selector ) {
         // back compatibility
-        $( FBM_Settings.selector ).each(function(index, el) {
+        $( args.selector ).each(function(index, el) {
             $(this).attr('data-fancybox', $(this).attr('rel') );
         });
 
-        $( FBM_Settings.selector ).fancybox({
-            animationEffect : FBM_Settings.lib_args.openCloseEffect,
-            transitionEffect : FBM_Settings.lib_args.nextPrevEffect,
+        $( args.selector ).fancybox({
+            animationEffect : args.lib_args.openCloseEffect,
+            transitionEffect : args.lib_args.nextPrevEffect,
         });
     }
 
     /**
-     * Set events
+     * Set events by modal posts
      */
-    $.each(FBModals, function(modal_id, modal) {
-        if( 'shortcode' == modal.trigger_type ) return;
+    $.each(modals, function(modal_id, modalArgs) {
+        if( 'shortcode' == modalArgs.trigger_type ) return;
 
-        switch ( modal.trigger_type ) {
+        switch ( modalArgs.trigger_type ) {
             case 'onclick':
-                $( modal.trigger ).on('click', function(event) {
-                    openLWModal(modal_id, modal);
+                $( modalArgs.trigger ).on('click', function(event) {
+                    event.preventDefault();
+                    new fancyboxModal(modal_id, modalArgs).open();
                 });
-            break;
+                break;
+
             case 'onload':
                 setTimeout(function() {
-                     openLWModal(modal_id, modal);
-                }, modal.trigger * 1000 );
-            break;
+                    new fancyboxModal(modal_id, modalArgs).open();
+                }, modalArgs.trigger * 1000 );
+                break;
+
             case 'onclose':
                 $(document).one('mouseleave', function(event) {
-                    openLWModal(modal_id, modal);
+                    new fancyboxModal(modal_id, modalArgs).open();
                 });
-            break;
+                break;
         }
     });
 
-    // Open by shortcode
+    // Increase a count by shortcode
     $('[data-modal-id]').on('click', function(event) {
-        var modal_id = +$(this).attr( 'data-modal-id' );
-        if( modal_id >= 1 ) {
-            increaseClickCount( modal_id );
+        var modal_id = parseInt( $(this).attr( 'data-modal-id' ) );
+        if( modal_id ) {
+            new fancyboxModal(modal_id).increaseClickCount();
         }
     });
 });
