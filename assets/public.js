@@ -74,7 +74,7 @@ jQuery(document).ready(function($) {
     };
 
     var fancyboxModal = function(modalID, modalArgs) {
-        this.modal_id = modalID;
+        this.modal_id = parseInt(modalID);
         this.modal_args = modalArgs ? modalArgs : {};
 
         // @todo
@@ -100,10 +100,10 @@ jQuery(document).ready(function($) {
         open: function() {
             var self = this;
 
-            if( self.modal_args.disable_ontime <= 0 || !(modal_id in args.disabled) || new Date().getTime() > args.disabled[ modal_id ] ) {
+            if( self.modal_args.disable_ontime <= 0 || !(this.modal_id in args.disabled) || new Date().getTime() > args.disabled[ this.modal_id ] ) {
                 try {
                     var fancy = {
-                        src  : '#modal_' + modal_id,
+                        src  : '#modal_' + this.modal_id,
                         type : 'inline',
                         opts : {
                             afterShow : function( instance, current ) {
@@ -146,9 +146,14 @@ jQuery(document).ready(function($) {
      * Set events by modal posts
      */
     $.each(modals, function(modal_id, modalArgs) {
-        if( 'shortcode' == modalArgs.trigger_type ) return;
-
         switch ( modalArgs.trigger_type ) {
+            case 'shortcode':
+                $('[data-modal-id="'+ modal_id +'"]').on('click', function(event) {
+                    event.preventDefault();
+                    new fancyboxModal($(this).data('modal-id'), modalArgs).open();
+                });
+                break;
+
             case 'onclick':
                 $( modalArgs.trigger ).on('click', function(event) {
                     event.preventDefault();
@@ -171,10 +176,10 @@ jQuery(document).ready(function($) {
     });
 
     // Increase a count by shortcode
-    $('[data-modal-id]').on('click', function(event) {
-        var modal_id = parseInt( $(this).attr( 'data-modal-id' ) );
-        if( modal_id ) {
-            new fancyboxModal(modal_id).increaseClickCount();
-        }
-    });
+    // $('[data-modal-id]').on('click', function(event) {
+    //     var modal_id = parseInt( $(this).attr( 'data-modal-id' ) );
+    //     if( modal_id ) {
+    //         new fancyboxModal(modal_id).increaseClickCount();
+    //     }
+    // });
 });

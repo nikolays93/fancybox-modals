@@ -53,7 +53,7 @@ class Shortcode
             $strAttributes .= " $attr_key=$attr_value";
         }
 
-        $html = sprintf('<a data-fancybox data-modal-id="%1$d" data-src="#modal_%1$d" href="%2$s"%3$s>%4$s</a>',
+        $html = sprintf('<a data-modal-id="%1$d" href="%2$s"%3$s>%4$s</a>',
             $modal_id,
             $atts['href'] ? esc_url( $atts['href'] ) : '#',
             $strAttributes,
@@ -198,6 +198,9 @@ class Shortcode
 
             case 'inline':
             default:
+            /**
+             * the content filter may be not worked on elementor
+             */
             echo apply_filters( 'the_content', $modal->post_content );
             break;
         }
