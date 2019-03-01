@@ -133,7 +133,10 @@ jQuery(document).ready(function($) {
     if( args.selector ) {
         // back compatibility
         $( args.selector ).each(function(index, el) {
-            $(this).attr('data-fancybox', $(this).attr('rel') );
+            var dataFB = $(this).data('fancybox');
+            var rel = $(this).attr('rel');
+
+            if( !dataFB && rel ) $(this).attr('data-fancybox', $(this).attr('rel') );
         });
 
         $( args.selector ).fancybox({
