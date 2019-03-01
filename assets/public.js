@@ -139,7 +139,7 @@ jQuery(document).ready(function($) {
             if( !dataFB && rel ) $(this).attr('data-fancybox', $(this).attr('rel') );
         });
 
-        $( args.selector ).fancybox({
+        $( args.selector ).not('.nolightbox').fancybox({
             animationEffect : args.lib_args.openCloseEffect,
             transitionEffect : args.lib_args.nextPrevEffect,
         });
