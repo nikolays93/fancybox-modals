@@ -165,9 +165,11 @@ jQuery(document).ready(function($) {
                 break;
 
             case 'onload':
-                setTimeout(function() {
-                    new fancyboxModal(modal_id, modalArgs).open();
-                }, modalArgs.trigger * 1000 );
+                $(window).on('ready post-load', function(event) {
+                    setTimeout(function() {
+                        new fancyboxModal(modal_id, modalArgs).open();
+                    }, modalArgs.trigger * 1000 );
+                }).trigger('ready');
                 break;
 
             case 'onclose':
