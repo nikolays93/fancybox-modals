@@ -2,9 +2,9 @@
 
 /*
  * Plugin Name: FancyBox 3 Modals
- * Plugin URI: #
+ * Plugin URI: https://github.com/nikolays93/fancybox-modals
  * Description: Модальные (всплывающие) окна для создания галерей при помощи самой популярной библиотеки, всплывающих форм, блоков, галерей и сообщений.
- * Version: 0.1
+ * Version: 1.0
  * Author: NikolayS93
  * Author URI: https://vk.com/nikolays_93
  * Author EMAIL: NikolayS93@ya.ru

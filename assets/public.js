@@ -9,6 +9,13 @@ jQuery(document).ready(function($) {
 
     args.disabled = getDisabledList();
 
+    var libraryArgs = {
+        animationEffect : args.lib_args.openCloseEffect,
+        transitionEffect : args.lib_args.nextPrevEffect,
+    };
+
+    var gallerySelector = '.gallery-item a';
+
     $.fancybox.defaults.buttons = args.buttons;
     $.fancybox.defaults.lang = args.lang;
     $.fancybox.defaults.i18n[ args.lang ] = args.i18n;
@@ -127,8 +134,39 @@ jQuery(document).ready(function($) {
         }
     }
 
+    window.jQuery.checkImageLink = function() {
+        var href = $(this).attr('href');
+
+        return /\.(jpe?g|png|gif|bmp|webp)$/i.test( href );
+    }
+
     /**
-     * Set events by selector for gallery images
+     * Set events by all image links
+     */
+    if( args.force ) {
+        $('a').filter( $.checkImageLink ).each(function() {
+            $(this).fancybox( libraryArgs );
+        });
+    }
+
+    /**
+     * Set events by wordpress gallery
+     */
+    if( args.gallery ) {
+        $(gallerySelector).filter( checkImageLink ).each(function() {
+            var galleryid = $(this).closest('.gallery').attr("id");
+            var $image = $(this).find("img");
+
+            $(this).attr({
+                'data-fancybox': galleryid,
+                'title': $image.attr('title'),
+                'data-caption': $image.attr('alt')
+            });
+        });
+    }
+
+    /**
+     * Set events by selector
      */
     if( args.selector ) {
         // back compatibility
@@ -139,10 +177,12 @@ jQuery(document).ready(function($) {
             if( !dataFB && rel ) $(this).attr('data-fancybox', $(this).attr('rel') );
         });
 
-        $( args.selector ).not('.nolightbox').fancybox({
-            animationEffect : args.lib_args.openCloseEffect,
-            transitionEffect : args.lib_args.nextPrevEffect,
-        });
+        var stoplist = '.nolightbox';
+        if( args.gallery ) {
+            stoplist += ', ' + gallerySelector;
+        }
+
+        $( args.selector ).not(stoplist).fancybox( libraryArgs );
     }
 
     /**
@@ -179,12 +219,4 @@ jQuery(document).ready(function($) {
                 break;
         }
     });
-
-    // Increase a count by shortcode
-    // $('[data-modal-id]').on('click', function(event) {
-    //     var modal_id = parseInt( $(this).attr( 'data-modal-id' ) );
-    //     if( modal_id ) {
-    //         new fancyboxModal(modal_id).increaseClickCount();
-    //     }
-    // });
 });

@@ -48,6 +48,16 @@ $data = array(
         'id'      => 'for_group',
         'value'   => __('To group objects, use the same <em>rel</em>', DOMAIN),
     ),
+    array(
+        'type'      => 'checkbox',
+        'id'        => 'force',
+        'label'     => __('Force lightbox', DOMAIN),
+    ),
+    array(
+        'type'      => 'checkbox',
+        'id'        => 'gallery',
+        'label'     => __('Set for gallery', DOMAIN),
+    ),
 );
 
 $form = new Form( $data, array(

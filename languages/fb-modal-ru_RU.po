@@ -1,15 +1,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: plugin\n"
-"POT-Creation-Date: 2018-11-25 21:24+0400\n"
-"PO-Revision-Date: 2018-11-25 21:24+0400\n"
+"POT-Creation-Date: 2019-03-01 15:17+0400\n"
+"PO-Revision-Date: 2019-03-01 15:19+0400\n"
 "Last-Translator: \n"
 "Language-Team: NikolayS93 <NikolayS93@yandex.ru>\n"
 "Language: ru_RU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.7\n"
+"X-Generator: Poedit 2.2.1\n"
 "X-Poedit-Basepath: ../.\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
@@ -92,6 +92,32 @@ msgstr "Переворот"
 msgid "To group objects, use the same <em>rel</em>"
 msgstr "Для группировки объектов используйте одинаковый аттрибут <em>rel</em>"
 
+#: admin/template/metabox1.php:54
+msgid "Force lightbox"
+msgstr "Для всех ссылок"
+
+#: admin/template/metabox1.php:59
+msgid "Set for gallery"
+msgstr "Установить для галереи"
+
+#: admin/template/post-metabox-type.php:16
+msgid "Inline"
+msgstr ""
+
+#: admin/template/post-metabox-type.php:17
+msgid "Script"
+msgstr ""
+
+#: admin/template/post-metabox-type.php:22
+msgid "Содержимое всплывающего окна выводиться в конце страницы"
+msgstr ""
+
+#: admin/template/post-metabox-type.php:23
+msgid ""
+"Содержимое всплывающего окна устанавливается скриптом. Преимущество такого "
+"подхода в том, что медиа контент загружается только после инициализации."
+msgstr ""
+
 #: admin/template/post-metabox.php:16
 msgid ""
 "Copy the code above to the desired page, or paste the following code into "
@@ -158,7 +184,19 @@ msgstr "Не передан ID всплывающего окна"
 msgid "Event"
 msgstr "Событие"
 
-#: include/shortcode.php:160
+#: include/register.php:72
+#, fuzzy
+#| msgid "Type:"
+msgid "Type"
+msgstr "Тип:"
+
+#: include/register.php:97
+#, fuzzy
+#| msgid "Do not use"
+msgid "Do not show title"
+msgstr "Не использовать"
+
+#: include/shortcode.php:196
 msgid "Loading.."
 msgstr "Загрузка.."
 
@@ -194,14 +232,8 @@ msgstr "Удалить"
 #~ msgid "Libary"
 #~ msgstr "Библиотека"
 
-#~ msgid "Do not use"
-#~ msgstr "Не использовать"
-
 #~ msgid "Save"
 #~ msgstr "Сохранить"
-
-#~ msgid "Type:"
-#~ msgstr "Тип:"
 
 #~ msgid "Hide on footer"
 #~ msgstr "Скрыть в подвале"

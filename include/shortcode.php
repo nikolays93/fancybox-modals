@@ -86,8 +86,6 @@ class Shortcode
 
     private static function enqueue_modal_scripts()
     {
-        if( !is_array(self::$bootstraps) || !sizeof(self::$bootstraps) ) return false;
-
         $assets = Utils::get_plugin_url('/assets');
         $affix = ( defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ) ? '' : '.min';
 
@@ -122,6 +120,8 @@ class Shortcode
                 'ZOOM'        => "Приблизить"
             ),
         ));
+
+        if( (!is_array(self::$bootstraps) || !sizeof(self::$bootstraps)) && empty($gSettings['selector']) ) return false;
 
         $script = $assets . "/fancybox3/jquery.fancybox{$affix}.js";
         $style = $assets . "/fancybox3/jquery.fancybox{$affix}.css";
