@@ -198,7 +198,7 @@ class Shortcode
         }
 
         $modals = array();
-        foreach (self::$bootstraps as $bs)
+        foreach ($this->bootstraps as $bs)
         {
             $type = get_post_meta( $bs->ID, '_modal_type', true );
 
