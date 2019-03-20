@@ -48,10 +48,10 @@ class Shortcode
         $modal_id = absint($atts['id']);
 
         /** We need clickable content and valid modal id for bootstrap */
-        if( !$content || 0 >= $modal_id ) return false;
+        if( !$content || 0 >= $modal_id || isset($this->bootstraps[ $modal_id ]) ) return false;
 
         /** Insert new post by id */
-        $this->bootstraps[] = get_post( $modal_id );
+        $this->bootstraps[ $modal_id ] = get_post( $modal_id );
 
         $attributes = array(
             'href'  => $atts['href'],
