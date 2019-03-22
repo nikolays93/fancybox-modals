@@ -134,6 +134,8 @@ jQuery(document).ready(function($) {
         }
     }
 
+    var stoplist = '.nolightbox';
+
     window.jQuery.checkImageLink = function() {
         var href = $(this).attr('href');
 
@@ -141,19 +143,10 @@ jQuery(document).ready(function($) {
     }
 
     /**
-     * Set events by all image links
-     */
-    if( args.force ) {
-        $('a').filter( $.checkImageLink ).each(function() {
-            $(this).fancybox( libraryArgs );
-        });
-    }
-
-    /**
      * Set events by wordpress gallery
      */
     if( args.gallery ) {
-        $(gallerySelector).filter( checkImageLink ).each(function() {
+        $(gallerySelector).not(stoplist).filter( $.checkImageLink ).each(function() {
             var galleryid = $(this).closest('.gallery').attr("id");
             var $image = $(this).find("img");
 
@@ -162,6 +155,17 @@ jQuery(document).ready(function($) {
                 'title': $image.attr('title'),
                 'data-caption': $image.attr('alt')
             });
+        });
+
+        stoplist += ', ' + gallerySelector;
+    }
+
+    /**
+     * Set events by all image links
+     */
+    if( args.force ) {
+        $('a').not(stoplist).filter( $.checkImageLink ).each(function() {
+            $(this).fancybox( libraryArgs );
         });
     }
 
@@ -176,11 +180,6 @@ jQuery(document).ready(function($) {
 
             if( !dataFB && rel ) $(this).attr('data-fancybox', $(this).attr('rel') );
         });
-
-        var stoplist = '.nolightbox';
-        if( args.gallery ) {
-            stoplist += ', ' + gallerySelector;
-        }
 
         $( args.selector ).not(stoplist).fancybox( libraryArgs );
     }

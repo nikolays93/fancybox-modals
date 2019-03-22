@@ -4,7 +4,7 @@
  * Plugin Name: FancyBox 3 Modals
  * Plugin URI: https://github.com/nikolays93/fancybox-modals/releases
  * Description: Модальные (всплывающие) окна для создания галерей при помощи самой популярной библиотеки, всплывающих форм, блоков, галерей и сообщений.
- * Version: 1.0
+ * Version: 1.1
  * Author: NikolayS93
  * Author URI: https://vk.com/nikolays_93
  * Author EMAIL: NikolayS93@ya.ru
@@ -72,17 +72,6 @@ class Plugin
         require PLUGIN_DIR . '/include/shortcode.php';
     }
 
-    public static function hooks()
-    {
-        $class = __NAMESPACE__ . '\Shortcode';
-        add_action( 'FBModal_head', array($class, 'modal_window_head'), 10, 2 );
-        add_action( 'FBModal_body', array($class, 'modal_window_body'), 10, 2 );
-
-        add_action('wp_footer', array($class, 'setup_footer'));
-
-        add_shortcode( Utils::get_shortcode_name(), array($class, 'shortcode') );
-    }
-
     static function activate()
     {
         add_option(
@@ -97,10 +86,6 @@ class Plugin
     }
 
     static function uninstall() { delete_option( self::get_option_name() ); }
-
-    // public static function _admin_assets()
-    // {
-    // }
 
     public static function admin_menu_page()
     {
@@ -144,4 +129,3 @@ Plugin::define();
 
 add_action( 'plugins_loaded', array( __NAMESPACE__ . '\Plugin', 'initialize' ), 10 );
 add_action( 'plugins_loaded', array( __NAMESPACE__ . '\Plugin', 'admin_menu_page' ), 10 );
-add_action( 'plugins_loaded', array( __NAMESPACE__ . '\Plugin', 'hooks' ), 10 );

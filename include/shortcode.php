@@ -6,12 +6,78 @@ if ( ! defined( 'ABSPATH' ) ) exit; // disable direct access
 
 class Shortcode
 {
-    private static $bootstraps = array();
-    private function __construct(){}
+    private static $instance = null;
+    private $bootstraps = array();
 
-    private static function push_active_bootstraps()
+    private function __construct() {}
+    private function __clone() {}
+
+    public static function __instance()
     {
-        self::$bootstraps += get_posts( array(
+        if( !self::$instance ) self::$instance = new self();
+
+        return self::$instance;
+    }
+
+    function register()
+    {
+        add_shortcode( Utils::get_shortcode_name(), array($this, 'callback') );
+    }
+
+    function setup_footer()
+    {
+        $this->push_active_bootstraps();
+        $this->render_modal_bootstraps();
+        $this->enqueue_modal_scripts();
+    }
+
+    function callback( $atts = array(), $content = '' )
+    {
+        /**
+         * Sanitize shortcode atts
+         */
+        $atts = shortcode_atts( array(
+            'id'      => 0,
+            'href'    => '',
+            'class'   => '',
+            'attr_id' => '',
+            'title'   => '',
+        ), $atts, Utils::get_shortcode_name() );
+
+        /** @var int $post->ID */
+        $modal_id = absint($atts['id']);
+
+        /** We need clickable content and valid modal id for bootstrap */
+        if( !$content || 0 >= $modal_id || isset($this->bootstraps[ $modal_id ]) ) return false;
+
+        /** Insert new post by id */
+        $this->bootstraps[ $modal_id ] = get_post( $modal_id );
+
+        $attributes = array(
+            'href'  => $atts['href'],
+            'id'    => $atts['attr_id'],
+            'class' => $atts['class'],
+            'title' => $atts['title'],
+        );
+
+        $strAttributes = '';
+        foreach ($attributes as $k => $v) {
+            $strAttributes .= sprintf(' %s="%s"', $k, esc_attr($v));
+        }
+
+        $html = sprintf('<a data-modal-id="%1$d" href="%2$s"%3$s>%4$s</a>',
+            $modal_id,
+            $atts['href'] ? esc_url( $atts['href'] ) : '#',
+            $strAttributes,
+            $content
+        );
+
+        return $html;
+    }
+
+    private function push_active_bootstraps()
+    {
+        $this->bootstraps += get_posts( array(
             'post_status' => 'publish',
             'post_type'  => Utils::get_post_type_name(),
             'meta_query' => array(
@@ -24,67 +90,48 @@ class Shortcode
         ) );
     }
 
-    static function shortcode( $atts = array(), $content = '' )
+    function render_modal_bootstrap($bs, $type = 'inline')
     {
-        $atts = shortcode_atts( array(
-            'id'      => 0,
-            'href'    => '',
-            'class'   => '',
-            'attr_id' => '',
-            'title'   => '',
-        ), $atts, Utils::get_shortcode_name() );
+        ?>
+        <div id="modal-<?= $bs->ID ?>" style='display: none;'>
+        <?php
 
-        if( ! $content || 0 >= $modal_id = absint($atts['id']) ) {
-            return false;
-        }
+            if( !$second_title = get_post_meta( $bs->ID, '_second_title', true ) ) {
+                printf('<%1$s>%2$s</%1$s>', 'h4', $second_title);
+            }
 
-        self::$bootstraps[] = get_post( $modal_id );
+            switch ( $type ) {
+                case 'ajax':
+                echo '<div style="min-width: 400px;" id="ajax_data_'.$bs->ID.'"> '. __( 'Loading..' ) .' </div>';
+                break;
 
-        // sanitize attributes
-        $attributes = array_map('esc_attr', apply_filters( 'FBModals_sc_attrs', array(
-            'href'  => $atts['href'],
-            'id'    => $atts['attr_id'],
-            'class' => $atts['class'],
-            'title' => $atts['title'],
-        ) ) );
+                case 'inline':
+                default:
+                /**
+                 * the content filter may be not worked on elementor
+                 */
+                echo apply_filters( 'the_content', $bs->post_content );
+                break;
+            }
 
-        $strAttributes = '';
-        foreach ($attributes as $attr_key => $attr_value) {
-            $strAttributes .= " $attr_key=$attr_value";
-        }
-
-        $html = sprintf('<a data-modal-id="%1$d" href="%2$s"%3$s>%4$s</a>',
-            $modal_id,
-            $atts['href'] ? esc_url( $atts['href'] ) : '#',
-            $strAttributes,
-            $content
-        );
-
-        return apply_filters( 'FBModals_sc_html', $html );
+        ?>
+        </div><!-- #modal-<?= $bs->ID ?> -->
+        <?php
     }
 
-    /********************** After collect all bootstraps **********************/
-    private static function render_modal_bootstraps()
+    private function render_modal_bootstraps()
     {
-        foreach (self::$bootstraps as $modal) {
-            if( empty($modal->ID) ) continue;
-
-            $type = get_post_meta( $modal->ID, '_modal_type', true );
+        /** @var WP_Post $bs */
+        foreach ($this->bootstraps as $bs)
+        {
+            $type = get_post_meta( $bs->ID, '_modal_type', true );
             if( 'inline' != $type ) continue;
 
-            echo "<div id='modal_{$modal->ID}' style='display: none;'>";
-
-            do_action( 'FBModal_head', $modal, $type );
-
-            do_action( 'FBModal_body', $modal, $type );
-
-            do_action( 'FBModal_foot', $modal, $type );
-
-            echo "</div>";
+            $this->render_modal_bootstrap($bs, $type);
         }
     }
 
-    private static function enqueue_modal_scripts()
+    private function enqueue_modal_scripts()
     {
         $assets = Utils::get_plugin_url('/assets');
         $affix = ( defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ) ? '' : '.min';
@@ -95,7 +142,7 @@ class Shortcode
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce'    => wp_create_nonce( 'Secret' ),
             'cookie'   => 'fb3m_disabled',
-            'expires'  => apply_filters( 'disable_coockie_expires', 24 * 7 ), // one week
+            'expires'  => apply_filters( 'disable_cookie_expires', 24 * 7 ), // one week
             'buttons'  => array(
                 "zoom",
                 //"share",
@@ -121,95 +168,59 @@ class Shortcode
             ),
         ));
 
-        if( (!is_array(self::$bootstraps) || !sizeof(self::$bootstraps)) && empty($gSettings['selector']) ) return false;
+        $isEnqueue = false;
 
-        $script = $assets . "/fancybox3/jquery.fancybox{$affix}.js";
-        $style = $assets . "/fancybox3/jquery.fancybox{$affix}.css";
-
-        if( apply_filters( 'use_cdn_for_fancybox_enqueue', false ) ) {
-            $script = "https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox{$affix}.js";
-            $style = "https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox{$affix}.css";
+        if( 1 <= sizeof($this->bootstraps) ) {
+            $isEnqueue = true;
         }
 
-        /**
-         * @todo  Use deregister?
-         */
-        // if( !apply_filters('disable_fancybox_enqueue', false) ) {
-            wp_enqueue_script(
-                'fancybox3',
-                apply_filters( 'fancybox_enqueue_script', $script ),
-                array('jquery'),
-                '3.0',
-                true
-            );
-            wp_enqueue_style(
-                'fancybox3',
-                apply_filters( 'fancybox_enqueue_style', $style ),
-                null,
-                '3.0'
-            );
-        // }
+        elseif( !empty($gSettings['selector']) || !empty($gSettings['force']) || !empty($gSettings['gallery']) ) {
+            $isEnqueue = true;
+        }
+
+        if( apply_filters( 'fancybox_assets_enqueue', $isEnqueue ) ) {
+
+            if( apply_filters( 'fancybox_enqueue', true ) ) {
+                $script = $assets . "/fancybox/jquery.fancybox{$affix}.js";
+                $style = $assets . "/fancybox/jquery.fancybox{$affix}.css";
+
+                if( apply_filters( 'use_cdn_for_fancybox_enqueue', false ) ) {
+                    $script = "https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox{$affix}.js";
+                    $style = "https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.2/jquery.fancybox{$affix}.css";
+                }
+
+                wp_enqueue_script('fancybox', apply_filters('fancybox_script', $script), array('jquery'), '3.0', true);
+                wp_enqueue_style('fancybox', apply_filters('fancybox_style', $style), null, '3.0');
+            }
+
+            wp_enqueue_script( 'FB3Modals_public', $assets . '/public.js', array('jquery'), Plugin::$data['Version'], true );
+            wp_localize_script('FB3Modals_public', 'FBM_Settings', $gSettings);
+        }
 
         $modals = array();
-        foreach (self::$bootstraps as $modal) {
-            $type = get_post_meta( $modal->ID, '_modal_type', true );
+        foreach ($this->bootstraps as $bs)
+        {
+            $type = get_post_meta( $bs->ID, '_modal_type', true );
 
-            $modals[ $modal->ID ] = array(
-                'trigger_type'   => get_post_meta( $modal->ID, '_trigger_type', true ),
-                'trigger'        => get_post_meta( $modal->ID, '_trigger', true ),
-                'disable_ontime' => get_post_meta( $modal->ID, '_disable_ontime', true ),
+            $modals[ $bs->ID ] = array(
+                'trigger_type'   => get_post_meta( $bs->ID, '_trigger_type', true ),
+                'trigger'        => get_post_meta( $bs->ID, '_trigger', true ),
+                'disable_ontime' => get_post_meta( $bs->ID, '_disable_ontime', true ),
                 'modal_type'     => $type,
             );
 
             if( 'script' == $type ) {
                 ob_start();
-                do_action( 'FBModal_head', $modal, $type );
-                do_action( 'FBModal_body', $modal, $type );
-                do_action( 'FBModal_foot', $modal, $type );
-                $modals[ $modal->ID ]['src'] = ob_get_clean();
+                $this->render_modal_bootstrap($bs, $type);
+                $modals[ $bs->ID ]['src'] = ob_get_clean();
             }
         }
 
-        wp_enqueue_script( 'FB3Modals_public', $assets . '/public.js', array('jquery'), Plugin::$data['Version'], true );
-
-        wp_localize_script( 'FB3Modals_public', 'FBModals', $modals );
-        wp_localize_script( 'FB3Modals_public', 'FBM_Settings', $gSettings );
-    }
-
-    /**
-     * @hook wp_footer
-     */
-    static function setup_footer()
-    {
-        self::push_active_bootstraps();
-        self::render_modal_bootstraps();
-        self::enqueue_modal_scripts();
-        // Так не пойдет потому что wp_enqueue_scripts уже выполнен
-        // add_action( 'wp_enqueue_scripts',
-        //     array(__NAMESPACE__ . '\\' . __CLASS__, '_enqueue_modal_scripts') );
-    }
-
-    static function modal_window_body( $modal, $type )
-    {
-        switch ( $type ) {
-            case 'ajax':
-            echo '<div style="min-width: 400px;" id="ajax_data_'.$modal->ID.'"> '. __( 'Loading..' ) .' </div>';
-            break;
-
-            case 'inline':
-            default:
-            /**
-             * the content filter may be not worked on elementor
-             */
-            echo apply_filters( 'the_content', $modal->post_content );
-            break;
-        }
-    }
-
-    static function modal_window_head( $modal, $type )
-    {
-        if( $modal && !$hide_title = get_post_meta( $modal->ID, '_hide_title', true ) ) {
-            echo "<h2>{$modal->post_title}</h2>";
-        }
+        wp_localize_script('FB3Modals_public', 'FBModals', $modals);
     }
 }
+
+$Shortcode = Shortcode::__instance();
+$Shortcode->register();
+
+add_action('wp_footer', array($Shortcode, 'setup_footer'));

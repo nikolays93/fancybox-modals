@@ -1,0 +1,5 @@
+*.lock
+vendor
+node_modules
+assets/fancybox/*
+!/vendor/wp-post-boxes.php
