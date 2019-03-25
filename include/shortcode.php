@@ -53,12 +53,12 @@ class Shortcode
         /** Insert new post by id */
         $this->bootstraps[ $modal_id ] = get_post( $modal_id );
 
-        $attributes = array(
+        $attributes = array_filter( array(
             'href'  => $atts['href'],
             'id'    => $atts['attr_id'],
             'class' => $atts['class'],
             'title' => $atts['title'],
-        );
+        ) );
 
         $strAttributes = '';
         foreach ($attributes as $k => $v) {
@@ -125,7 +125,7 @@ class Shortcode
         foreach ($this->bootstraps as $bs)
         {
             $type = get_post_meta( $bs->ID, '_modal_type', true );
-            if( 'inline' != $type ) continue;
+            if( 'script' == $type || 'ajax' == $type ) continue;
 
             $this->render_modal_bootstrap($bs, $type);
         }

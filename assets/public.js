@@ -99,7 +99,8 @@ jQuery(document).ready(function($) {
         writeCookieTime: function() {
             var now = new Date().getTime();
             var time = parseFloat(this.modal_args.disable_ontime);
-            if( 0 >= time ) return;
+
+            if( !time || 0 >= time ) return;
 
             args.disabled[ this.modal_id ] = now + (oneHour * time);
             document.cookie = args.cookie +"="+ JSON.stringify(args.disabled) +"; path=/; expires=" + new Date(now + (oneHour * args.expires)).toUTCString();
@@ -110,7 +111,7 @@ jQuery(document).ready(function($) {
             if( self.modal_args.disable_ontime <= 0 || !(this.modal_id in args.disabled) || new Date().getTime() > args.disabled[ this.modal_id ] ) {
                 try {
                     var fancy = {
-                        src  : '#modal_' + this.modal_id,
+                        src  : '#modal-' + this.modal_id,
                         type : 'inline',
                         opts : {
                             afterShow : function( instance, current ) {
@@ -189,13 +190,6 @@ jQuery(document).ready(function($) {
      */
     $.each(modals, function(modal_id, modalArgs) {
         switch ( modalArgs.trigger_type ) {
-            case 'shortcode':
-                $('[data-modal-id="'+ modal_id +'"]').on('click', function(event) {
-                    event.preventDefault();
-                    new fancyboxModal($(this).data('modal-id'), modalArgs).open();
-                });
-                break;
-
             case 'onclick':
                 $( modalArgs.trigger ).on('click', function(event) {
                     event.preventDefault();
@@ -214,6 +208,14 @@ jQuery(document).ready(function($) {
             case 'onclose':
                 $(document).one('mouseleave', function(event) {
                     new fancyboxModal(modal_id, modalArgs).open();
+                });
+                break;
+
+            case 'shortcode':
+            default:
+                $('[data-modal-id="'+ modal_id +'"]').on('click', function(event) {
+                    event.preventDefault();
+                    new fancyboxModal($(this).data('modal-id'), modalArgs).open();
                 });
                 break;
         }
