@@ -51,7 +51,9 @@ class Shortcode
         if( !$content || 0 >= $modal_id || isset($this->bootstraps[ $modal_id ]) ) return false;
 
         /** Insert new post by id */
-        $this->bootstraps[ $modal_id ] = get_post( $modal_id );
+        if( $post = get_post( $modal_id ) ) {
+            $this->bootstraps[ $modal_id ] = $post;
+        }
 
         $attributes = array_filter( array(
             'href'  => $atts['href'],
