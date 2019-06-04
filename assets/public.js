@@ -1,24 +1,15 @@
 jQuery(document).ready(function($) {
-    var oneHour   = 60 * 60 * 1000;
 
-    /** global FBModals list of modal posts */
-    var modals = FBModals;
+    /**
+     * Add jQuery method - check the link is image
+     */
+    if( !typeof(window.jQuery.checkImageLink) ) {
+        window.jQuery.checkImageLink = function() {
+            var href = $(this).attr('href');
 
-    /** global FBM_Settings general plugin settings */
-    var args   = FBM_Settings;
-
-    args.disabled = getDisabledList();
-
-    var libraryArgs = {
-        animationEffect : args.lib_args.openCloseEffect,
-        transitionEffect : args.lib_args.nextPrevEffect,
-    };
-
-    var gallerySelector = '.gallery-item a';
-
-    $.fancybox.defaults.buttons = args.buttons;
-    $.fancybox.defaults.lang = args.lang;
-    $.fancybox.defaults.i18n[ args.lang ] = args.i18n;
+            return /\.(jpe?g|png|gif|bmp|webp)$/i.test( href );
+        }
+    }
 
     /**
      * Get list of disabled modals from cookie
@@ -42,44 +33,43 @@ jQuery(document).ready(function($) {
         return disabled;
     };
 
-    var preloaderClass = 'fb-loading';
-    window.showPreloader = function( message ) {
-        if(!message) message = 'Загрузка..';
-        $preload = $('<p>'+ message +'</p>').css({
-            'margin-top': '50px',
-            'margin-bottom': '-40px',
-            'padding-bottom': '',
-            'color': '#ddd'
-        });;
+    /**
+     * Const int for human acceptable
+     */
+    var oneHour = 60 * 60 * 1000;
 
-        var $body = $('body');
+    /** global FBModals list of modal posts */
+    var modals = FBModals;
 
-        $.fancybox.open({
-            content  : $preload,
-            type     : 'html',
-            smallBtn : false,
-            afterLoad: function(instance, current) {
-                $('.fancybox-content', instance.$refs['fancybox-stage']).css('background', 'none');
-            },
-            afterShow: function(instance, current) {
-                $body.addClass(preloaderClass);
-                instance.showLoading( current );
-            },
-            afterClose: function(instance, current) {
-                $body.removeClass(preloaderClass);
-                instance.hideLoading( current );
-            }
-        });
+    /** global FBM_Settings general plugin settings */
+    var args   = FBM_Settings;
+
+    args.disabled = getDisabledList();
+
+    /**
+     * Installed fancybox settings
+     */
+    var libraryArgs = {
+        animationEffect : args.lib_args.openCloseEffect,
+        transitionEffect : args.lib_args.nextPrevEffect,
     };
 
-    window.hidePreloader = function() {
-        var $body = $('body');
+    /** @type {String} Custom selector for ignore links */
+    var stoplist = '.nolightbox';
 
-        if( $body.hasClass(preloaderClass) ) {
-            $.fancybox.getInstance().close();
-        }
-    };
+    /** @type {String} Gallery items selector (need custom prepare @todo may be add filter) */
+    var gallerySelector = '.gallery-item a';
 
+    /**
+     * Default buttons and russian language
+     */
+    $.fancybox.defaults.buttons = args.buttons;
+    $.fancybox.defaults.lang = args.lang;
+    $.fancybox.defaults.i18n[ args.lang ] = args.i18n;
+
+    /**
+     * Constructs
+     */
     var fancyboxModal = function(modalID, modalArgs) {
         this.modal_id = parseInt(modalID);
         this.modal_args = modalArgs ? modalArgs : {};
@@ -88,7 +78,14 @@ jQuery(document).ready(function($) {
         // this.defaults = {};
     }
 
+    /**
+     * Methods
+     */
     fancyboxModal.prototype = {
+
+        /**
+         * Write new click count for analitics
+         */
         increaseClickCount: function() {
             $.post( args.ajax_url, {
                 action: 'increase_click_count',
@@ -96,6 +93,10 @@ jQuery(document).ready(function($) {
                 modal_id: this.modal_id
             });
         },
+
+        /**
+         * Write cookie for temporary disable
+         */
         writeCookieTime: function() {
             var now = new Date().getTime();
             var time = parseFloat(this.modal_args.disable_ontime);
@@ -105,6 +106,10 @@ jQuery(document).ready(function($) {
             args.disabled[ this.modal_id ] = now + (oneHour * time);
             document.cookie = args.cookie +"="+ JSON.stringify(args.disabled) +"; path=/; expires=" + new Date(now + (oneHour * args.expires)).toUTCString();
         },
+
+        /**
+         * Try open modal
+         */
         open: function() {
             var self = this;
 
@@ -133,14 +138,6 @@ jQuery(document).ready(function($) {
                 }
             }
         }
-    }
-
-    var stoplist = '.nolightbox';
-
-    window.jQuery.checkImageLink = function() {
-        var href = $(this).attr('href');
-
-        return /\.(jpe?g|png|gif|bmp|webp)$/i.test( href );
     }
 
     /**
@@ -176,10 +173,9 @@ jQuery(document).ready(function($) {
     if( args.selector ) {
         // back compatibility
         $( args.selector ).each(function(index, el) {
-            var dataFB = $(this).data('fancybox');
-            var rel = $(this).attr('rel');
-
-            if( !dataFB && rel ) $(this).attr('data-fancybox', $(this).attr('rel') );
+            if(!$(this).data('fancybox') && $(this).attr('rel') ) {
+                $(this).data('fancybox',  $(this).attr('rel') );
+            }
         });
 
         $( args.selector ).not(stoplist).fancybox( libraryArgs );

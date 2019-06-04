@@ -39,7 +39,7 @@ class Shortcode
         $atts = shortcode_atts( array(
             'id'      => 0,
             'href'    => '',
-            'class'   => '',
+            'class'   => 'modallink',
             'attr_id' => '',
             'title'   => '',
         ), $atts, Utils::get_shortcode_name() );
@@ -48,10 +48,10 @@ class Shortcode
         $modal_id = absint($atts['id']);
 
         /** We need clickable content and valid modal id for bootstrap */
-        if( !$content || 0 >= $modal_id || isset($this->bootstraps[ $modal_id ]) ) return false;
+        if( !$content || 0 >= $modal_id ) return false;
 
         /** Insert new post by id */
-        if( $post = get_post( $modal_id ) ) {
+        if( !isset($this->bootstraps[ $modal_id ]) && ($post = get_post( $modal_id )) ) {
             $this->bootstraps[ $modal_id ] = $post;
         }
 
@@ -69,7 +69,7 @@ class Shortcode
 
         $html = sprintf('<a data-modal-id="%1$d" href="%2$s"%3$s>%4$s</a>',
             $modal_id,
-            $atts['href'] ? esc_url( $atts['href'] ) : '#',
+            $atts['href'] ? esc_url( $atts['href'] ) : 'javascript',
             $strAttributes,
             $content
         );
