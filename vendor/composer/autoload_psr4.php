@@ -8,6 +8,6 @@ $baseDir = dirname($vendorDir);
 return array(
     'NikolayS93\\WPAdminPage\\' => array($vendorDir . '/NikolayS93/wp-admin-page/src'),
     'NikolayS93\\WPAdminForm\\' => array($vendorDir . '/NikolayS93/wp-admin-form/src'),
-    'NikolayS93\\FBModals\\' => array($baseDir . '/include'),
+    'NikolayS93\\FBModals\\' => array($baseDir . '/include/class'),
     'NikolayS93\\' => array($vendorDir . '/NikolayS93/wp-admin-table'),
 );

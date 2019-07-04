@@ -63,7 +63,8 @@ class Plugin
      */
     public static function get_option_name( $suffix = '' )
     {
-        return apply_filters("get_{DOMAIN}_option_name", DOMAIN . $suffix, $suffix);
+        $option_name = $suffix ? "{DOMAIN}_{$suffix}" : DOMAIN;
+        return apply_filters("get_{DOMAIN}_option_name", $option_name, $suffix);
     }
 
     /**
@@ -140,7 +141,7 @@ class Plugin
      * @param  mixed   $default   Что возвращать, если параметр не найден
      * @return mixed
      */
-    public static function get( $prop_name = null, $default = false, $context = 'admin' )
+    public static function get( $prop_name = null, $default = false, $context = '' )
     {
         $option_name = static::get_option_name($context);
 
@@ -166,7 +167,7 @@ class Plugin
      * @param string $context
      * @return bool             Совершились ли обновления @see update_option()
      */
-    public static function set( $prop_name, $value = '', $context = 'admin' )
+    public static function set( $prop_name, $value = '', $context = '' )
     {
         if( !$prop_name ) return;
         if( $value && !(string) $prop_name ) return;
@@ -182,7 +183,7 @@ class Plugin
         if( !empty($option) ) {
             $option_name = static::get_option_name($context);
             $autoload = null;
-            if( 'admin' == $context ) $autoload = 'no';
+            if( 'settings' == $context ) $autoload = 'no';
 
             return update_option( $option_name, $option, $autoload );
         }

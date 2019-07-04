@@ -27,7 +27,7 @@ class ComposerStaticInitb903afda440fc0b998640fc5c28d59ed
         ),
         'NikolayS93\\FBModals\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/include',
+            0 => __DIR__ . '/../..' . '/include/class',
         ),
         'NikolayS93\\' => 
         array (
