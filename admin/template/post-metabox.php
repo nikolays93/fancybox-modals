@@ -92,3 +92,4 @@ $active[ '_' . $active['_trigger_type'] ] = get_post_meta( $post->ID, '_trigger'
 $form->set($active);
 
 $form->display();
+wp_nonce_field( SECURITY, 'modal_metabox_nonce' );

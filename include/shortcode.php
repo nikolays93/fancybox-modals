@@ -98,9 +98,9 @@ class Shortcode
         <div id="modal-<?= $bs->ID ?>" style='display: none;'>
         <?php
 
-            if( !$second_title = get_post_meta( $bs->ID, '_second_title', true ) ) {
-                printf('<%1$s>%2$s</%1$s>', 'h4', $second_title);
-            }
+            // if( !$second_title = get_post_meta( $bs->ID, '_second_title', true ) ) {
+            //     printf('<%1$s>%2$s</%1$s>', 'h4', $second_title);
+            // }
 
             switch ( $type ) {
                 case 'ajax':
@@ -195,7 +195,7 @@ class Shortcode
                 wp_enqueue_style('fancybox', apply_filters('fancybox_style', $style), null, '3.0');
             }
 
-            wp_enqueue_script( 'FB3Modals_public', $assets . '/public.js', array('jquery'), Plugin::$data['Version'], true );
+            wp_enqueue_script( 'FB3Modals_public', $assets . '/public.js', array('jquery'), Plugin::get_plugin_data('Version'), true );
             wp_localize_script('FB3Modals_public', 'FBM_Settings', $gSettings);
         }
 

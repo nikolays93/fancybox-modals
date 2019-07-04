@@ -3,7 +3,7 @@
 namespace NikolayS93\FBModals;
 
 /**
- * Check click count
+ * add show count on click for postmeta
  */
 add_action( 'wp_ajax_nopriv_increase_click_count', __NAMESPACE__ . '\increase_click_count' );
 add_action( 'wp_ajax_increase_click_count', __NAMESPACE__ . '\increase_click_count' );
