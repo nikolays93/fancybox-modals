@@ -7,8 +7,20 @@
 		"url": "https://github.com/nikolays93/fancybox-modals.git"
 	},
 	"license": "MIT",
+	"scripts": {
+		"dev": "gulp",
+		"install": "gulp --production"
+	},
 	"devDependencies": {
-		"gulp": "^4.0.0"
+		"@babel/core": "^7.5.5",
+		"@babel/preset-env": "^7.5.5",
+		"babel-loader": "^8.0.6",
+		"gulp": "^4.0.0",
+		"gulp-if": "^2.0.2",
+		"gulp-rename": "^1.2.2",
+		"webpack": "^4.36.1",
+		"webpack-stream": "^5.2.1",
+		"yargs": "^12.0.5"
 	},
 	"dependencies": {
 		"@fancyapps/fancybox": "^3.5.6"

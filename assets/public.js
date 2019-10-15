@@ -1,219 +1,336 @@
-jQuery(document).ready(function($) {
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = "./assets/src/public.js");
+/******/ })
+/************************************************************************/
+/******/ ({
 
-    /**
-     * Add jQuery method - check the link is image
-     */
-    if( !typeof(window.jQuery.checkImageLink) ) {
-        window.jQuery.checkImageLink = function() {
-            var href = $(this).attr('href');
+/***/ "./assets/src/fancyboxModal.js":
+/*!*************************************!*\
+  !*** ./assets/src/fancyboxModal.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
 
-            return /\.(jpe?g|png|gif|bmp|webp)$/i.test( href );
-        }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var fancyboxModal =
+/*#__PURE__*/
+function () {
+  function fancyboxModal(modalID, modalArgs) {
+    _classCallCheck(this, fancyboxModal);
+
+    this.modal_id = parseInt(modalID);
+    this.modal_args = modalArgs ? modalArgs : {}; // @todo
+    // this.defaults = {};
+  }
+  /**
+   * Write new click count for analitics
+   */
+
+
+  _createClass(fancyboxModal, [{
+    key: "increaseClickCount",
+    value: function increaseClickCount(args) {
+      $.post(args.ajax_url, {
+        action: 'increase_click_count',
+        nonce: args.nonce,
+        modal_id: this.modal_id
+      });
     }
-
     /**
-     * Get list of disabled modals from cookie
-     * @return Object from json
+     * Write cookie for temporary disable
      */
-    function getDisabledList() {
-        var disabled = {};
 
-        var o=document.cookie.match(new RegExp("(?:^|; )"+args.cookie.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g,"\\$1")+"=([^;]*)"));
-        var cookie = o?decodeURIComponent(o[1]):void 0;
+  }, {
+    key: "writeCookieTime",
+    value: function writeCookieTime(args) {
+      var now = new Date().getTime(),
+          time = parseFloat(this.modal_args.disable_ontime);
+      if (!time || 0 >= time) return;
+      args.disabled[this.modal_id] = now + oneHour * time;
+      document.cookie = args.cookie + "=" + JSON.stringify(args.disabled) + "; path=/; expires=" + new Date(now + oneHour * args.expires).toUTCString();
+    }
+  }, {
+    key: "open",
+    value: function open(args) {
+      var _this = this;
 
-        if( cookie ) {
-            try {
-                disabled = JSON.parse( cookie );
-            } catch(e) {
-                console.log('Can\'t get disabled modal\'s cookie data');
-                console.log(e);
+      var exclude = args.disabled || {};
+
+      if (this.modal_args.disable_ontime <= 0 || !(this.modal_id in exclude) || new Date().getTime() > exclude[this.modal_id]) {
+        try {
+          var fancy = {
+            src: '#modal-' + this.modal_id,
+            type: 'inline',
+            opts: {
+              afterShow: function afterShow(instance, current) {
+                _this.writeCookieTime();
+
+                _this.increaseClickCount();
+              }
             }
+          };
+
+          if ('script' == this.modal_args.modal_type) {
+            fancy.src = this.modal_args.src;
+            fancy.type = 'html';
+          }
+
+          $.fancybox.open(fancy);
+        } catch (e) {
+          console.error('Do you hooked up the Fancybox library?');
+          console.log(e);
         }
+      }
+    }
+  }]);
 
-        return disabled;
-    };
+  return fancyboxModal;
+}();
 
-    /**
-     * Const int for human acceptable
-     */
-    var oneHour = 60 * 60 * 1000;
+;
 
-    /** global FBModals list of modal posts */
-    var modals = FBModals;
+/***/ }),
 
-    /** global FBM_Settings general plugin settings */
-    var args   = FBM_Settings;
+/***/ "./assets/src/public.js":
+/*!******************************!*\
+  !*** ./assets/src/public.js ***!
+  \******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
-    args.disabled = getDisabledList();
+jQuery(document).ready(function ($) {
+  /**
+   * Get list of disabled modals from cookie
+   * @return Object from json
+   */
+  function getDisabledList() {
+    var disabled = {};
+    var o = document.cookie.match(new RegExp("(?:^|; )" + args.cookie.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, "\\$1") + "=([^;]*)"));
+    var cookie = o ? decodeURIComponent(o[1]) : void 0;
 
-    /**
-     * Installed fancybox settings
-     */
-    var libraryArgs = {
-        animationEffect : args.lib_args.openCloseEffect,
-        transitionEffect : args.lib_args.nextPrevEffect,
-    };
-
-    /** @type {String} Custom selector for ignore links */
-    var stoplist = '.nolightbox';
-
-    /** @type {String} Gallery items selector (need custom prepare @todo may be add filter) */
-    var gallerySelector = '.gallery-item a';
-
-    /**
-     * Default buttons and russian language
-     */
-    $.fancybox.defaults.buttons = args.buttons;
-    $.fancybox.defaults.lang = args.lang;
-    $.fancybox.defaults.i18n[ args.lang ] = args.i18n;
-
-    /**
-     * Constructs
-     */
-    var fancyboxModal = function(modalID, modalArgs) {
-        this.modal_id = parseInt(modalID);
-        this.modal_args = modalArgs ? modalArgs : {};
-
-        // @todo
-        // this.defaults = {};
+    if (cookie) {
+      try {
+        disabled = JSON.parse(cookie);
+      } catch (e) {
+        console.error('Can\'t get disabled modal\'s cookie data');
+        console.log(e);
+      }
     }
 
-    /**
-     * Methods
-     */
-    fancyboxModal.prototype = {
+    return disabled;
+  }
 
-        /**
-         * Write new click count for analitics
-         */
-        increaseClickCount: function() {
-            $.post( args.ajax_url, {
-                action: 'increase_click_count',
-                nonce: args.nonce,
-                modal_id: this.modal_id
-            });
-        },
+  ;
+  /**
+   * @param  String
+   * @return Bool
+   */
 
-        /**
-         * Write cookie for temporary disable
-         */
-        writeCookieTime: function() {
-            var now = new Date().getTime();
-            var time = parseFloat(this.modal_args.disable_ontime);
+  function isImage(src) {
+    return /\.(jpe?g|png|gif|bmp|webp)$/i.test(src);
+  }
 
-            if( !time || 0 >= time ) return;
+  ; // set default buttons
 
-            args.disabled[ this.modal_id ] = now + (oneHour * time);
-            document.cookie = args.cookie +"="+ JSON.stringify(args.disabled) +"; path=/; expires=" + new Date(now + (oneHour * args.expires)).toUTCString();
-        },
+  $.fancybox.defaults.buttons = args.buttons; // Extend russian language
 
-        /**
-         * Try open modal
-         */
-        open: function() {
-            var self = this;
+  $.fancybox.defaults.lang = args.lang;
+  $.fancybox.defaults.i18n[args.lang] = args.i18n;
 
-            if( self.modal_args.disable_ontime <= 0 || !(this.modal_id in args.disabled) || new Date().getTime() > args.disabled[ this.modal_id ] ) {
-                try {
-                    var fancy = {
-                        src  : '#modal-' + this.modal_id,
-                        type : 'inline',
-                        opts : {
-                            afterShow : function( instance, current ) {
-                                self.writeCookieTime();
-                                self.increaseClickCount();
-                            },
-                        }
-                    };
+  var fancyboxModal = __webpack_require__(/*! ./fancyboxModal.js */ "./assets/src/fancyboxModal.js");
+  /** @type int for human acceptable */
 
-                    if( 'script' == self.modal_args.modal_type ) {
-                        fancy.src = self.modal_args.src;
-                        fancy.type = 'html';
-                    }
 
-                    $.fancybox.open( fancy );
-                } catch(e) {
-                    console.error('Do you hooked up the Fancybox library?');
-                    console.log(e);
-                }
-            }
-        }
-    }
+  var oneHour = 60 * 60 * 1000;
+  /** global FBModals list of modal posts */
 
-    /**
-     * Set events by wordpress gallery
-     */
-    if( args.gallery ) {
-        $(gallerySelector).not(stoplist).filter( $.checkImageLink ).each(function() {
-            var galleryid = $(this).closest('.gallery').attr("id");
-            var $image = $(this).find("img");
+  var modals = FBModals;
+  /** global FBM_Settings general plugin settings */
 
-            $(this).attr({
-                'data-fancybox': galleryid,
-                'title': $image.attr('title'),
-                'data-caption': $image.attr('alt')
-            });
-        });
+  var args = FBM_Settings;
+  args.disabled = getDisabledList(); // Installed fancybox settings
 
-        stoplist += ', ' + gallerySelector;
-    }
+  var libraryArgs = {
+    animationEffect: args.lib_args.openCloseEffect,
+    transitionEffect: args.lib_args.nextPrevEffect
+  };
+  /** @type {String} Custom selector for ignore links */
 
-    /**
-     * Set events by all image links
-     */
-    if( args.force ) {
-        $('a').not(stoplist).filter( $.checkImageLink ).each(function() {
-            $(this).fancybox( libraryArgs );
-        });
-    }
+  var stoplist = '.nolightbox';
+  /** @type {String} Gallery items selector (need custom prepare @todo may be add filter) */
 
-    /**
-     * Set events by selector
-     */
-    if( args.selector ) {
-        // back compatibility
-        $( args.selector ).each(function(index, el) {
-            if(!$(this).data('fancybox') && $(this).attr('rel') ) {
-                $(this).data('fancybox',  $(this).attr('rel') );
-            }
-        });
+  var gallerySelector = '.gallery-item a';
+  /**
+   * Set events by wordpress gallery
+   */
 
-        $( args.selector ).not(stoplist).fancybox( libraryArgs );
-    }
-
-    /**
-     * Set events by modal posts
-     */
-    $.each(modals, function(modal_id, modalArgs) {
-        switch ( modalArgs.trigger_type ) {
-            case 'onclick':
-                $( modalArgs.trigger ).on('click', function(event) {
-                    event.preventDefault();
-                    new fancyboxModal(modal_id, modalArgs).open();
-                });
-                break;
-
-            case 'onload':
-                $(window).on('ready post-load', function(event) {
-                    setTimeout(function() {
-                        new fancyboxModal(modal_id, modalArgs).open();
-                    }, modalArgs.trigger * 1000 );
-                }).trigger('ready');
-                break;
-
-            case 'onclose':
-                $(document).one('mouseleave', function(event) {
-                    new fancyboxModal(modal_id, modalArgs).open();
-                });
-                break;
-
-            case 'shortcode':
-            default:
-                $('[data-modal-id="'+ modal_id +'"]').on('click', function(event) {
-                    event.preventDefault();
-                    new fancyboxModal($(this).data('modal-id'), modalArgs).open();
-                });
-                break;
-        }
+  if (args.gallery) {
+    $(gallerySelector).not(stoplist).filter(function () {
+      return isImage($(this).attr('href'));
+    }).each(function () {
+      var galleryid = $(this).closest('.gallery').attr("id");
+      var $image = $(this).find("img");
+      $(this).attr({
+        'data-fancybox': galleryid,
+        'title': $image.attr('title'),
+        'data-caption': $image.attr('alt')
+      });
     });
+    stoplist += ', ' + gallerySelector;
+  }
+  /**
+   * Set events by all image links
+   */
+
+
+  if (args.force) {
+    $('a').not(stoplist).filter(function () {
+      return isImage($(this).attr('href'));
+    }).each(function () {
+      $(this).fancybox(libraryArgs);
+    });
+  }
+  /**
+   * Set events by selector
+   */
+
+
+  if (args.selector) {
+    // back compatibility
+    $(args.selector).each(function (index, el) {
+      if (!$(this).data('fancybox') && $(this).attr('rel')) {
+        $(this).data('fancybox', $(this).attr('rel'));
+      }
+    });
+    $(args.selector).not(stoplist).fancybox(libraryArgs);
+  }
+  /**
+   * Set events by modal posts
+   */
+
+
+  $.each(modals, function (modal_id, modalArgs) {
+    switch (modalArgs.trigger_type) {
+      case 'onclick':
+        $(modalArgs.trigger).on('click', function (event) {
+          event.preventDefault();
+          new fancyboxModal(modal_id, modalArgs).open(args);
+        });
+        break;
+
+      case 'onload':
+        $(window).on('ready post-load', function (event) {
+          setTimeout(function () {
+            new fancyboxModal(modal_id, modalArgs).open(args);
+          }, modalArgs.trigger * 1000);
+        }).trigger('ready');
+        break;
+
+      case 'onclose':
+        $(document).one('mouseleave', function (event) {
+          new fancyboxModal(modal_id, modalArgs).open(args);
+        });
+        break;
+
+      case 'shortcode':
+      default:
+        $('[data-modal-id="' + modal_id + '"]').on('click', function (event) {
+          event.preventDefault();
+          new fancyboxModal($(this).data('modal-id'), modalArgs).open(args);
+        });
+        break;
+    }
+  });
 });
+
+/***/ })
+
+/******/ });
+//# sourceMappingURL=public.js.map
