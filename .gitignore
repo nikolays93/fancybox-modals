@@ -1,6 +1,0 @@
-/assets/*
-!/assets/public.js
-/vendor/*
-!/vendor/wp-post-boxes.php
-/node_modules/
-*.lock
