@@ -1,14 +1,7 @@
 jQuery(document).ready(function($) {
 
-    /**
-     * Add jQuery method - check the link is image
-     */
-    if( !typeof(window.jQuery.checkImageLink) ) {
-        window.jQuery.checkImageLink = function() {
-            var href = $(this).attr('href');
-
-            return /\.(jpe?g|png|gif|bmp|webp)$/i.test( href );
-        }
+    function isLinkToImage() {
+        return /\.(jpe?g|png|gif|bmp|webp)$/i.test(this.getAttribute('href'));
     }
 
     /**
@@ -18,13 +11,13 @@ jQuery(document).ready(function($) {
     function getDisabledList() {
         var disabled = {};
 
-        var o=document.cookie.match(new RegExp("(?:^|; )"+args.cookie.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g,"\\$1")+"=([^;]*)"));
-        var cookie = o?decodeURIComponent(o[1]):void 0;
+        var o = document.cookie.match(new RegExp("(?:^|; )" + args.cookie.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, "\\$1") + "=([^;]*)"));
+        var cookie = o ? decodeURIComponent(o[1]) : void 0;
 
-        if( cookie ) {
+        if (cookie) {
             try {
-                disabled = JSON.parse( cookie );
-            } catch(e) {
+                disabled = JSON.parse(cookie);
+            } catch (e) {
                 console.log('Can\'t get disabled modal\'s cookie data');
                 console.log(e);
             }
@@ -42,7 +35,7 @@ jQuery(document).ready(function($) {
     var modals = FBModals;
 
     /** global FBM_Settings general plugin settings */
-    var args   = FBM_Settings;
+    var args = FBM_Settings;
 
     args.disabled = getDisabledList();
 
@@ -50,8 +43,8 @@ jQuery(document).ready(function($) {
      * Installed fancybox settings
      */
     var libraryArgs = {
-        animationEffect : args.lib_args.openCloseEffect,
-        transitionEffect : args.lib_args.nextPrevEffect,
+        animationEffect: args.lib_args.openCloseEffect,
+        transitionEffect: args.lib_args.nextPrevEffect,
     };
 
     /** @type {String} Custom selector for ignore links */
@@ -65,7 +58,7 @@ jQuery(document).ready(function($) {
      */
     $.fancybox.defaults.buttons = args.buttons;
     $.fancybox.defaults.lang = args.lang;
-    $.fancybox.defaults.i18n[ args.lang ] = args.i18n;
+    $.fancybox.defaults.i18n[args.lang] = args.i18n;
 
     /**
      * Constructs
@@ -87,7 +80,7 @@ jQuery(document).ready(function($) {
          * Write new click count for analitics
          */
         increaseClickCount: function() {
-            $.post( args.ajax_url, {
+            $.post(args.ajax_url, {
                 action: 'increase_click_count',
                 nonce: args.nonce,
                 modal_id: this.modal_id
@@ -101,10 +94,10 @@ jQuery(document).ready(function($) {
             var now = new Date().getTime();
             var time = parseFloat(this.modal_args.disable_ontime);
 
-            if( !time || 0 >= time ) return;
+            if (!time || 0 >= time) return;
 
-            args.disabled[ this.modal_id ] = now + (oneHour * time);
-            document.cookie = args.cookie +"="+ JSON.stringify(args.disabled) +"; path=/; expires=" + new Date(now + (oneHour * args.expires)).toUTCString();
+            args.disabled[this.modal_id] = now + (oneHour * time);
+            document.cookie = args.cookie + "=" + JSON.stringify(args.disabled) + "; path=/; expires=" + new Date(now + (oneHour * args.expires)).toUTCString();
         },
 
         /**
@@ -113,26 +106,26 @@ jQuery(document).ready(function($) {
         open: function() {
             var self = this;
 
-            if( self.modal_args.disable_ontime <= 0 || !(this.modal_id in args.disabled) || new Date().getTime() > args.disabled[ this.modal_id ] ) {
+            if (self.modal_args.disable_ontime <= 0 || !(this.modal_id in args.disabled) || new Date().getTime() > args.disabled[this.modal_id]) {
                 try {
                     var fancy = {
-                        src  : '#modal-' + this.modal_id,
-                        type : 'inline',
-                        opts : {
-                            afterShow : function( instance, current ) {
+                        src: '#modal-' + this.modal_id,
+                        type: 'inline',
+                        opts: {
+                            afterShow: function(instance, current) {
                                 self.writeCookieTime();
                                 self.increaseClickCount();
                             },
                         }
                     };
 
-                    if( 'script' == self.modal_args.modal_type ) {
+                    if ('script' == self.modal_args.modal_type) {
                         fancy.src = self.modal_args.src;
                         fancy.type = 'html';
                     }
 
-                    $.fancybox.open( fancy );
-                } catch(e) {
+                    $.fancybox.open(fancy);
+                } catch (e) {
                     console.error('Do you hooked up the Fancybox library?');
                     console.log(e);
                 }
@@ -143,13 +136,15 @@ jQuery(document).ready(function($) {
     /**
      * Set events by wordpress gallery
      */
-    if( args.gallery ) {
-        $(gallerySelector).not(stoplist).filter( $.checkImageLink ).each(function() {
-            var galleryid = $(this).closest('.gallery').attr("id");
+    if (args.gallery) {
+        var $galleryItems = $(gallerySelector).not(stoplist).filter(isLinkToImage);
+
+        $galleryItems.not(stoplist).filter(isLinkToImage).each(function() {
+            var galleryID = $(this).closest('.gallery').attr("id");
             var $image = $(this).find("img");
 
             $(this).attr({
-                'data-fancybox': galleryid,
+                'data-fancybox': galleryID,
                 'title': $image.attr('title'),
                 'data-caption': $image.attr('alt')
             });
@@ -161,33 +156,33 @@ jQuery(document).ready(function($) {
     /**
      * Set events by all image links
      */
-    if( args.force ) {
-        $('a').not(stoplist).filter( $.checkImageLink ).each(function() {
-            $(this).fancybox( libraryArgs );
+    if (args.force) {
+        $('a').not(stoplist).filter(isLinkToImage).each(function() {
+            $(this).fancybox(libraryArgs);
         });
     }
 
     /**
      * Set events by selector
      */
-    if( args.selector ) {
+    if (args.selector) {
         // back compatibility
-        $( args.selector ).each(function(index, el) {
-            if(!$(this).data('fancybox') && $(this).attr('rel') ) {
-                $(this).data('fancybox',  $(this).attr('rel') );
+        $(args.selector).each(function(index, el) {
+            if (!$(this).data('fancybox') && $(this).attr('rel')) {
+                $(this).data('fancybox', $(this).attr('rel'));
             }
         });
 
-        $( args.selector ).not(stoplist).fancybox( libraryArgs );
+        $(args.selector).not(stoplist).fancybox(libraryArgs);
     }
 
     /**
      * Set events by modal posts
      */
     $.each(modals, function(modal_id, modalArgs) {
-        switch ( modalArgs.trigger_type ) {
+        switch (modalArgs.trigger_type) {
             case 'onclick':
-                $( modalArgs.trigger ).on('click', function(event) {
+                $(modalArgs.trigger).on('click', function(event) {
                     event.preventDefault();
                     new fancyboxModal(modal_id, modalArgs).open();
                 });
@@ -197,7 +192,7 @@ jQuery(document).ready(function($) {
                 $(window).on('ready post-load', function(event) {
                     setTimeout(function() {
                         new fancyboxModal(modal_id, modalArgs).open();
-                    }, modalArgs.trigger * 1000 );
+                    }, modalArgs.trigger * 1000);
                 }).trigger('ready');
                 break;
 
@@ -209,7 +204,7 @@ jQuery(document).ready(function($) {
 
             case 'shortcode':
             default:
-                $('[data-modal-id="'+ modal_id +'"]').on('click', function(event) {
+                $('[data-modal-id="' + modal_id + '"]').on('click', function(event) {
                     event.preventDefault();
                     new fancyboxModal($(this).data('modal-id'), modalArgs).open();
                 });
